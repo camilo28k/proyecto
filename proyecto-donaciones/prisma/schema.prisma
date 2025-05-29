@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model categorys{
+  id_category String @id @default(uuid())
+  name String
+  campaign campaigns[]
+  createdAt DateTime @default(now())
+}
+model campaigns{
+id_campaign String @id @default(uuid())
+id_category String
+category categorys @relation(fields: [id_category], references: [id_category])
+title String
+description String
+phonet String
+meta Float
+start_date String
+end_date String
+active Boolean @default(true)
+createdAt DateTime @default(now())
+updateAt DateTime @updatedAt
+donation donations[]
+comment comments[]
+}
+model comments{
+  id_comment String @id @default(uuid())
+  id_campaign String
+  campaig campaigns @relation(fields: [id_campaign], references: [id_campaign])
+  name String
+  content String
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+}
+model donations {
+  id_donation String     @id @default(uuid())
+  id_campaign String
+  campaign    campaigns  @relation(fields: [id_campaign], references: [id_campaign])
+  amount      Float
+  createdAt   DateTime   @default(now())
+  factura     facturas?  @relation("DonacionFactura")
+}
+
+model facturas {
+  id_factura   String     @id @default(uuid())
+  id_donation  String     @unique
+  donation     donations  @relation("DonacionFactura", fields: [id_donation], references: [id_donation])
+  amount       Float
+  createdAt    DateTime   @default(now())
+}
